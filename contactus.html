@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>  
+    <head>  
+       
+    <script type="text/javascript" src="https://unpkg.com/webcam-easy/dist/webcam-easy.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script> 
+    <script type='text/javascript'>
+    
+    $(document).ready(function() {
+    	
+    	const webcamElement = document.getElementById('webcam');
+    	const canvasElement = document.getElementById('canvas');
+    	const snapSoundElement = document.getElementById('snapSound');
+    	const webcam = new Webcam(webcamElement, 'user', canvasElement, snapSoundElement);
+    	webcam.start()
+   	   .then(result =>{
+   	      console.log("webcam started");
+   	   })
+   	   .catch(err => {
+   	       console.log(err);
+   	   });	 
+    	
+    	$("#btn_notificar").click(function() {
+            var documento =   $("#txt_documento").val();
+         	var picture = webcam.snap();
+            var request = $.ajax({
+                 url: "https://8236gtyu7d.execute-api.us-east-2.amazonaws.com/desa",//URL AWS
+                 jsonp: "callback",
+                 method:"POST",
+                 data : JSON.stringify({documento:documento,imagen:picture}),
+                 async: false,
+                 success: function(respuestaSolicitud) {
+                     	alert(respuestaSolicitud.body);
+                 }
+             });
+         });
+    });	 	
+    </script>
+    <head>  
+<body>
+    <form action="/dev" method="post" >
+        Documento:
+        </br>
+        <input type="text" id="txt_documento" name="txt_documento"/>
+        </br>
+	        <video id="webcam"  width="300" height="300"></video>
+			<canvas id="canvas" class="d-none"></canvas>
+			<audio id="snapSound" src="audio/snap.wav" preload = "auto"></audio>
+	    </br>
+	    <label for="email">Email id:</label><br>
+  <input type="text" id="email" name="email" ><br><br>
+  <img id="snapSound">
+        <input type="Submit" name="btn_notificar"  id="btn_notificar" >
+    </form>
+  </body>
+  </html>
